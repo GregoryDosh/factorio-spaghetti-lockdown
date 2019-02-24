@@ -6,13 +6,8 @@ local lockdown_minable = true
 local lockdown_rotatable = true
 
 local function add_duration_to_existing_lockdown_ticks(duration)
-    if game ~= nil then
-        for _, gp in pairs(game.players) do
-            gp.print("Adding difference " .. duration .. " to existing entity locks.")
-            for tick_ent in global.entity_lock_queue:iter_left() do
-                tick_ent[1] = tick_ent[1] + duration
-            end
-        end
+    for tick_ent in global.entity_lock_queue:iter_left() do
+        tick_ent[1] = tick_ent[1] + duration
     end
 end
 
@@ -41,19 +36,12 @@ local function init_settings()
 end
 
 local function game_loop_process_entity_locks(event)
-    for _, gp in pairs(game.players) do
-        gp.print("Tick " .. event.tick .. " length " .. global.entity_lock_queue:length())
-    end
-
     local tick, ent = nil, nil
     while not global.entity_lock_queue:is_empty() and global.entity_lock_queue:peek_left()[1] < event.tick do
         tick, ent = unpack(global.entity_lock_queue:pop_left())
         if ent.valid then
             ent.minable = not lockdown_minable
             ent.rotatable = not lockdown_rotatable
-            for _, gp in pairs(game.players) do
-                gp.print("Locking " .. ent.name .. " created on tick " .. tick)
-            end
         end
     end
 end
@@ -66,9 +54,6 @@ local function game_loop_entity_built(event)
 
     if is_ghost == false then
         global.entity_lock_queue:push_right({event.tick + duration_until_lockdown, entity})
-        for _, gp in pairs(game.players) do
-            gp.print("Let it be known that " .. entity.name .. " was created at " .. event.tick .. " to be locked at " .. event.tick + duration_until_lockdown .. " and the global length is " .. global.entity_lock_queue:length())
-        end
     end
 end
 
