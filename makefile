@@ -25,4 +25,5 @@ link:
 
 # target: dist - Make a release.
 dist:
+	rm -f *.zip
 	git archive --prefix "$(RELEASE_NAME)/" -o "$(RELEASE_NAME).zip" HEAD
