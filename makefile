@@ -18,12 +18,17 @@ tag:
 push_tag:
 	git push origin $(VERSION)
 
+# target: clean - Clean the links and zip files from the dev/dist process
+clean:
+	rm -f ./*.zip
+	rm -f $(HOME)/Library/Application\ Support/factorio/mods/$(NAME)*
+
 # target: link - Link the existing folder to the Factorio location for macOS
 link:
-	rm -f $(HOME)/Library/Application\ Support/factorio/mods/$(NAME)*
+	make clean
 	ln -s "`pwd`/" "$(HOME)/Library/Application Support/factorio/mods/$(RELEASE_NAME)"
 
 # target: dist - Make a release.
 dist:
-	rm -f *.zip
+	make clean
 	git archive --prefix "$(RELEASE_NAME)/" -o "$(RELEASE_NAME).zip" HEAD
